@@ -2,13 +2,9 @@ name: CI (Python - unittest)
 
 on:
   push:
-    branches:
-      - develop
-      - 'feature/**'
+    branches: [main, develop, 'feature/**']
   pull_request:
-    branches:
-      - develop
-      - 'feature/**'
+    branches: [main, develop, 'feature/**']
 
 jobs:
   test:
@@ -17,14 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.11']  # add more, e.g. '3.10', if needed
-
+        python-version: ['3.10']  
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -37,15 +30,12 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          
           pip install unittest-xml-reporting
 
       - name: Run tests (unittest)
         run: |
           mkdir -p reports
-         
           python -m unittest discover -s . -p "test_*.py" -v | tee reports/results.txt
-          # JUnit XML reports for CI
           python -m xmlrunner discover -s . -p "test_*.py" -o reports
 
       - name: Upload test reports
@@ -54,4 +44,5 @@ jobs:
         with:
           name: test-reports
           path: reports/
+          if-no-files-found: warnh: reports/
           if-no-files-found: warn
