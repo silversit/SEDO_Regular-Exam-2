@@ -44,5 +44,4 @@ jobs:
         with:
           name: test-reports
           path: reports/
-          if-no-files-found: warnh: reports/
           if-no-files-found: warn
